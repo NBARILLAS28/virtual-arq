@@ -1,0 +1,13 @@
+# Virtual ARQ es un sitio estatico: no hay build. Netlify publica la carpeta raiz.
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
