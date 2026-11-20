@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { makeCar } from './car.js';
 import { loadCar, CAR_MODELS } from './carmodel.js';
 import { makeTree, makeShrub } from './trees.js';
-import { placeFurniture, FURN } from './furniture.js';
+import { placeFurniture, placeDecor, FURN } from './furniture.js';
 
 const EPS = 0.001;
 
@@ -382,6 +382,12 @@ export function buildHouse(model, extras, M, quality = 'high') {
     }
     if (f.t === 'bed') parts.push(box(grp, f.x0 + 0.1, f.x1 - 0.1, y0 + h, y0 + h + 0.12, f.z0 + 0.05, f.z0 + 0.45, M.white, { solid: false }));
     if (f.t === 'sofa' || f.t === 'armchair') parts.push(box(grp, f.x0, f.x0 + 0.22, y0 + h, y0 + h + 0.3, f.z0, f.z1, M.fabric, { solid: false }));
+  });
+
+  // piezas sueltas con modelo real (inodoros, lavamanos, TV, estufa, lamparas)
+  (extras.decor || []).forEach((d) => {
+    const grp = d.lvl === 'pb' ? G.pb : G.pa;
+    placeDecor(grp, d, d.lvl === 'pb' ? L.pb : L.pa).catch((e) => console.warn('decor sin modelo', d.m, e));
   });
 
   // ---------- limites y punto de partida ----------
