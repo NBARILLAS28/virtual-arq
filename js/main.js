@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from '../vendor/OrbitControls.js';
 import { Sky } from '../vendor/Sky.js';
-import { makeMaterials } from './materials.js';
+import { makeMaterials, upgradeMaterials } from './materials.js';
 import { buildHouse } from './builder.js';
 import { Walker, bindJoystick } from './walk.js';
 import { Recorder } from './record.js';
@@ -68,6 +68,7 @@ function setHour(h, rebuildEnv = true) {
 
 // ---------- modelo ----------
 const M = makeMaterials(quality);
+upgradeMaterials(M, renderer);
 let house, walker, controls;
 const state = { mode: 'orbit', level: 'todo', mirror: false, tour: null, hour: 11 };
 

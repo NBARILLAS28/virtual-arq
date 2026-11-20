@@ -166,3 +166,54 @@ export function makeMaterials(quality = 'high') {
 
   return { plasterExt, plasterInt, ceiling, concrete, brick, stoneLaja, stoneRustic, wood, deck, tile, grass, dirt, asphalt, sidewalk, glass, frame, metalDark, neighbor, carPaint, rubber, fabric, bedding, counter, white, leaf, trunk };
 }
+
+// ---------------------------------------------------------------------------
+// Texturas fotograficas (Poly Haven, licencia CC0). Se cargan despues de crear
+// los materiales procedurales, que quedan como respaldo mientras descargan.
+// Cada mapa: diff (color), nor_gl (relieve) y arm (oclusion/rugosidad/metal).
+// `tile` = metros reales que cubre una repeticion de la textura.
+// ---------------------------------------------------------------------------
+const WARM = (r, g, b) => new THREE.Color().setRGB(r, g, b, THREE.LinearSRGBColorSpace);
+
+export function upgradeMaterials(M, renderer, base = './textures/') {
+  const loader = new THREE.TextureLoader();
+  const aniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  const cache = new Map();
+  const tex = (id, kind, tile) => {
+    const key = `${id}|${kind}|${tile}`;
+    if (cache.has(key)) return cache.get(key);
+    const t = loader.load(`${base}${id}/${id}_${kind}_1k.jpg`);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(1 / tile, 1 / tile);
+    t.anisotropy = aniso;
+    t.colorSpace = kind === 'diff' ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+    cache.set(key, t);
+    return t;
+  };
+  const apply = (mat, id, tile, { color, normal = 1 } = {}) => {
+    mat.map = tex(id, 'diff', tile);
+    mat.normalMap = tex(id, 'nor_gl', tile);
+    mat.normalScale.set(normal, normal);
+    const arm = tex(id, 'arm', tile);
+    mat.roughnessMap = arm;
+    mat.aoMap = arm;
+    mat.roughness = 1;
+    if (color) mat.color.copy(color);
+    mat.needsUpdate = true;
+  };
+
+  // repello: la textura base es beige oscuro casi plano; se aclara a crema
+  apply(M.plasterExt, 'beige_wall_001', 2, { color: WARM(2.6, 3.0, 3.5), normal: 1.2 });
+  apply(M.plasterInt, 'beige_wall_001', 2, { color: WARM(2.9, 3.5, 4.3), normal: 0.8 });
+  apply(M.neighbor, 'beige_wall_001', 2, { color: WARM(2.0, 2.3, 2.5) });
+  apply(M.brick, 'red_brick_03', 1.8);
+  apply(M.stoneLaja, 'rock_wall_08', 2.4, { normal: 1.4 });
+  apply(M.stoneRustic, 'rock_wall_08', 2.4, { color: WARM(1.25, 1.25, 1.3), normal: 1.4 });
+  apply(M.wood, 'wood_planks', 1.0, { color: WARM(0.75, 0.62, 0.5) });
+  apply(M.deck, 'wood_planks', 1.0);
+  apply(M.tile, 'large_floor_tiles_02', 1.8, { color: WARM(1.9, 1.75, 1.5), normal: 0.7 });
+  apply(M.concrete, 'concrete_wall_008', 2.0, { color: WARM(1.3, 1.3, 1.25) });
+  apply(M.asphalt, 'asphalt_02', 3.0);
+  apply(M.dirt, 'grass_path_2', 3.0);
+  apply(M.sidewalk, 'concrete_wall_008', 1.5, { color: WARM(1.7, 1.7, 1.6) });
+}
