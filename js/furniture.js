@@ -21,9 +21,9 @@ export const FURN = {
 export const DECOR = {
   toilet: { url: './models/muebles/toilet.glb', h: 0.80 },
   vanity: { url: './models/muebles/vanity.glb', h: 1.70 },
-  tv:     { url: './models/muebles/tv.glb',     w: 1.10 },
-  stove:  { url: './models/muebles/stove.glb',  w: 0.78 },
-  lamp:   { url: './models/muebles/lamp.glb',   w: 1.30 },
+  tv:     { url: './models/muebles/tv.glb',     len: 1.15 },
+  stove:  { url: './models/muebles/stove.glb',  len: 0.78 },
+  lamp:   { url: './models/muebles/lamp.glb',   len: 1.30 },
 };
 
 async function loadModel(url) {
@@ -70,7 +70,7 @@ export async function placeDecor(group, d, yFloor) {
   const cfg = { ...DECOR[d.m], ...d };
   if (!cfg.url) return null;
   const { pivot, size } = normalized(await loadModel(cfg.url), d.yaw);
-  const s = cfg.h ? cfg.h / size.y : cfg.w ? cfg.w / size.x : cfg.len / Math.max(size.x, size.z);
+  const s = cfg.h ? cfg.h / size.y : cfg.len / Math.max(size.x, size.y, size.z);
   const root = new THREE.Group(); root.add(pivot); root.scale.setScalar(s);
   root.position.set(d.x, yFloor + (d.y || 0), d.z);
   shadows(root); group.add(root);
