@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#101418">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Virtual ARQ</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+</head>
+<body data-mode="orbit">
+<canvas id="gl"></canvas>
+
+<header id="top">
+  <div class="brand"><b>VIRTUAL</b> ARQ</div>
+  <div id="info"></div>
+  <button data-act="help" class="ghost" aria-label="Ayuda">?</button>
+</header>
+
+<div id="loading">Cargando Virtual ARQ…</div>
+
+<nav id="bar">
+  <div class="grp">
+    <button data-mode="orbit" class="on">Orbitar</button>
+    <button data-mode="walk">Recorrer</button>
+    <button data-mode="top">Planta</button>
+  </div>
+  <div class="grp">
+    <button data-level="todo" class="on">Todo</button>
+    <button data-level="sin-techo">Sin techo</button>
+    <button data-level="pb">Planta baja</button>
+  </div>
+  <div class="grp">
+    <button data-act="mirror">Espejo</button>
+    <label class="hour">Luz <input id="hour" type="range" min="6.5" max="17.5" step="0.1" value="11"><span id="hourl"></span></label>
+  </div>
+  <div class="grp">
+    <button data-act="tour">Recorrido ▶</button>
+    <button data-act="tourvideo">Recorrido + video</button>
+    <button data-act="rec">● Grabar</button>
+  </div>
+</nav>
+
+<div id="joy" aria-label="Joystick"><i></i></div>
+<div id="hint">Arrastra para mirar · WASD o joystick para caminar · Shift corre</div>
+<div id="toast"></div>
+
+<section id="help" hidden>
+  <h2>Virtual ARQ</h2>
+  <p><b>Orbitar:</b> arrastra para girar, pellizca o rueda para acercar.</p>
+  <p><b>Recorrer:</b> camina por la casa. Entra por el pasillo peatonal del lado izquierdo del garage.</p>
+  <p><b>Planta / Sin techo:</b> mira la distribución desde arriba.</p>
+  <p><b>Espejo:</b> invierte la casa (garage a la izquierda o a la derecha).</p>
+  <p><b>Grabar / Recorrido + video:</b> graba lo que ves y lo muestra para descargar.</p>
+  <p class="small">Modelo leído de los planos R1 de Casa Pastora. Gradas, muebles y alturas de ventanas son aproximados.</p>
+  <button data-act="help">Cerrar</button>
+</section>
+
+<section id="vid" hidden>
+  <div class="card">
+    <video controls playsinline></video>
+    <div class="row">
+      <a class="btn" download>Descargar</a>
+      <button data-act="share" hidden>Compartir / Guardar</button>
+      <button data-act="closevid">Cerrar</button>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

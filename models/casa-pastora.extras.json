@@ -1,0 +1,51 @@
+{
+  "_nota": "Datos que el lector de PDF aun no detecta solo. Se midieron sobre los planos R1 (hojas 1 a 4) y son aproximados: gradas, vacios de losa, muebles referenciales y obras exteriores.",
+  "lot": { "x0": 0, "x1": 8.2, "zFront": 0.0, "zBack": -18.95 },
+  "garage": { "x0": 5.35, "x1": 8.1, "zIn": -4.75, "zOut": 0.15, "rampFrom": -2.4, "rampTo": -0.4 },
+  "walkway": { "x0": 4.28, "x1": 5.12, "zFront": 0.0, "zTop": -3.0, "risers": 6, "riserH": 0.15 },
+  "stair": {
+    "_nota": "Escalera en U: tramo sur sube hacia el oeste, descanso, tramo norte sube hacia el este. 16 contrahuellas de 0.17.",
+    "x0": 0.93, "x1": 2.74, "landingX0": 0.07,
+    "southZ0": -9.38, "southZ1": -8.44, "northZ0": -11.36, "northZ1": -10.45,
+    "risersPerFlight": 8, "riserH": 0.17
+  },
+  "voids": {
+    "pa": [
+      { "name": "vacio escalera", "x0": 0.07, "x1": 2.8, "z0": -11.34, "z1": -8.44 },
+      { "name": "vacio patio", "x0": 5.03, "x1": 8.12, "z0": -11.49, "z1": -9.93 }
+    ]
+  },
+  "balcony": { "x0": 0.0, "x1": 4.2, "z0": -2.93, "z1": -1.93, "railH": 1.07 },
+  "terrace": { "x0": 4.28, "x1": 8.28, "z0": -2.93, "z1": 0.15, "parapetH": 0.9 },
+  "deck": { "x0": 0.07, "x1": 4.15, "z0": -2.93, "z1": -2.0 },
+  "well": { "x": 1.22, "z": -2.5, "r": 0.45 },
+  "frontWall": { "x0": 0.0, "x1": 4.2, "z0": 0.1, "z1": 0.4, "h": 0.9 },
+  "furniture": [
+    { "t": "counter", "lvl": "pb", "x0": 0.5, "x1": 3.07, "z0": -17.17, "z1": -16.65 },
+    { "t": "counter", "lvl": "pb", "x0": 0.1, "x1": 0.6, "z0": -16.7, "z1": -13.8 },
+    { "t": "counter", "lvl": "pb", "x0": 2.33, "x1": 3.29, "z0": -15.66, "z1": -14.67 },
+    { "t": "fridge", "lvl": "pb", "x0": 1.8, "x1": 2.6, "z0": -14.0, "z1": -13.35 },
+    { "t": "table", "lvl": "pb", "x0": 4.81, "x1": 7.0, "z0": -15.63, "z1": -14.7 },
+    { "t": "chair", "lvl": "pb", "x0": 5.1, "x1": 5.5, "z0": -16.15, "z1": -15.75 },
+    { "t": "chair", "lvl": "pb", "x0": 5.8, "x1": 6.2, "z0": -16.15, "z1": -15.75 },
+    { "t": "chair", "lvl": "pb", "x0": 6.5, "x1": 6.9, "z0": -16.15, "z1": -15.75 },
+    { "t": "chair", "lvl": "pb", "x0": 5.1, "x1": 5.5, "z0": -14.6, "z1": -14.2 },
+    { "t": "chair", "lvl": "pb", "x0": 5.8, "x1": 6.2, "z0": -14.6, "z1": -14.2 },
+    { "t": "chair", "lvl": "pb", "x0": 6.5, "x1": 6.9, "z0": -14.6, "z1": -14.2 },
+    { "t": "appliance", "lvl": "pb", "x0": 7.42, "x1": 8.03, "z0": -12.82, "z1": -12.19 },
+    { "t": "appliance", "lvl": "pb", "x0": 7.42, "x1": 8.03, "z0": -11.93, "z1": -11.5 },
+    { "t": "sofa", "lvl": "pb", "x0": 2.17, "x1": 3.07, "z0": -6.65, "z1": -4.91 },
+    { "t": "coffee", "lvl": "pb", "x0": 1.09, "x1": 1.7, "z0": -6.15, "z1": -5.0 },
+    { "t": "armchair", "lvl": "pb", "x0": 0.76, "x1": 1.64, "z0": -7.89, "z1": -7.06 },
+    { "t": "armchair", "lvl": "pb", "x0": 0.76, "x1": 1.64, "z0": -4.33, "z1": -3.42 },
+    { "t": "wardrobe", "lvl": "pb", "x0": 4.3, "x1": 4.85, "z0": -7.55, "z1": -5.65 },
+    { "t": "bed", "lvl": "pb", "x0": 6.0, "x1": 7.6, "z0": -8.1, "z1": -6.1 },
+    { "t": "bed", "lvl": "pa", "x0": 1.2, "x1": 2.7, "z0": -17.1, "z1": -15.0 },
+    { "t": "bed", "lvl": "pa", "x0": 5.9, "x1": 7.5, "z0": -17.1, "z1": -15.0 },
+    { "t": "wardrobe", "lvl": "pa", "x0": 0.1, "x1": 2.7, "z0": -13.8, "z1": -13.3 },
+    { "t": "wardrobe", "lvl": "pa", "x0": 5.3, "x1": 7.7, "z0": -13.8, "z1": -13.3 },
+    { "t": "bed", "lvl": "pa", "x0": 0.8, "x1": 2.4, "z0": -6.0, "z1": -4.0 },
+    { "t": "wardrobe", "lvl": "pa", "x0": 5.1, "x1": 7.7, "z0": -5.0, "z1": -4.6 },
+    { "t": "wardrobe", "lvl": "pa", "x0": 5.1, "x1": 7.7, "z0": -3.65, "z1": -3.2 }
+  ]
+}

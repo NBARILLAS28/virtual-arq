@@ -1,0 +1,10 @@
+{
+  "name": "Virtual ARQ",
+  "short_name": "Virtual ARQ",
+  "description": "Recorrido 3D de planos arquitectónicos",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#101418",
+  "theme_color": "#101418",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
