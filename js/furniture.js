@@ -72,7 +72,8 @@ export async function placeDecor(group, d, yFloor) {
   const { pivot, size } = normalized(await loadModel(cfg.url), d.yaw);
   const s = cfg.h ? cfg.h / size.y : cfg.len / Math.max(size.x, size.y, size.z);
   const root = new THREE.Group(); root.add(pivot); root.scale.setScalar(s);
-  root.position.set(d.x, yFloor + (d.y || 0), d.z);
+  const size2 = size.y * s;
+  root.position.set(d.x, yFloor + (d.top != null ? d.top - size2 : (d.y || 0)), d.z);
   shadows(root); group.add(root);
   return root;
 }

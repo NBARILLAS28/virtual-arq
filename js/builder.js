@@ -335,12 +335,12 @@ export function buildHouse(model, extras, M, quality = 'high') {
   const triMesh = new THREE.Mesh(triGeo, M.plasterExt); triMesh.position.set(0, L.techo, -2.99); triMesh.castShadow = true; G.roof.add(triMesh);
 
   // ---------- vecinos (volumenes) y arboles ----------
-  const tree = (x, z, h, y = 0, seed = 1) => {
-    const t = makeTree({ seed, h });
+  const tree = (x, z, h, y = 0, seed = 1, crown = 1) => {
+    const t = makeTree({ seed, h, crown });
     t.position.set(x, y, z); t.rotation.y = seed * 1.7;
     G.site.add(t);
   };
-  tree(-2.2, 2.4, 6.5, 0.02, 1); tree(11.0, 2.2, 7.5, 0.02, 2); tree(2.5, -18.0, 5.2, L.pb - 0.02, 3); tree(6.2, -18.1, 4.6, L.pb - 0.02, 4);
+  tree(-2.4, 2.4, 6.5, 0.02, 1, 0.75); tree(11.4, 2.2, 7.5, 0.02, 2, 0.7); tree(2.5, -18.55, 5.0, L.pb - 0.02, 3, 0.4); tree(6.2, -18.6, 4.6, L.pb - 0.02, 4, 0.4);
 
   // ---------- auto en el garage ----------
   // El auto apoya el eje trasero en el piso plano y el delantero sobre la rampa:
