@@ -3,6 +3,7 @@
 // Ejes: x a la derecha, y arriba, z hacia la calle. Origen: ejes A y 1.
 import * as THREE from 'three';
 import { makeCar } from './car.js';
+import { loadCar, CAR_MODELS } from './carmodel.js';
 
 const EPS = 0.001;
 
@@ -323,18 +324,26 @@ export function buildHouse(model, extras, M, quality = 'high') {
   // El auto apoya el eje trasero en el piso plano y el delantero sobre la rampa:
   // se inclina segun la altura real del piso bajo cada eje.
   {
-    const car = makeCar();
-    const AXLE = 1.35, carZ = -2.5;
+    const slot = new THREE.Group();            // se inclina con la rampa
+    const carZ = -2.5, cx = (gar.x0 + gar.x1) / 2;
     const rampH = (z) => {
       if (z <= gar.rampFrom) return L.garaje;
       if (z >= gar.rampTo) return 0;
       return L.garaje * (1 - (z - gar.rampFrom) / (gar.rampTo - gar.rampFrom));
     };
-    const yRear = rampH(carZ - AXLE), yFront = rampH(carZ + AXLE);
-    car.rotation.x = Math.atan2(yRear - yFront, 2 * AXLE);   // nariz hacia abajo en la rampa
-    car.position.set((gar.x0 + gar.x1) / 2, (yRear + yFront) / 2, carZ);
-    G.pb.add(car);
-    solids.push({ x0: (gar.x0 + gar.x1) / 2 - 0.95, x1: (gar.x0 + gar.x1) / 2 + 0.95, y0: L.garaje, y1: L.garaje + 1.6, z0: carZ - 2.15, z1: carZ + 2.25 });
+    const place = (axle) => {
+      const yRear = rampH(carZ - axle), yFront = rampH(carZ + axle);
+      slot.rotation.x = Math.atan2(yRear - yFront, 2 * axle);   // nariz hacia abajo en la rampa
+      slot.position.set(cx, (yRear + yFront) / 2, carZ);
+    };
+    const fallback = makeCar();                 // auto por codigo, por si el GLB no carga
+    slot.add(fallback); place(1.35); G.pb.add(slot);
+    const carKey = (typeof location !== 'undefined' && new URLSearchParams(location.search).get('auto')) || 'jeep';
+    loadCar(carKey in CAR_MODELS ? carKey : 'jeep').then((real) => {
+      slot.remove(fallback); slot.add(real); place(CAR_MODELS[real.userData.cfg.key || carKey].wheelbase / 2);
+    }).catch((e) => console.warn('Auto GLB no cargo, se usa el procedural', e));
+    const car = slot;
+    solids.push({ x0: cx - 1.05, x1: cx + 1.05, y0: L.garaje, y1: L.garaje + 1.6, z0: carZ - 2.4, z1: carZ + 2.4 });
   }
 
   // ---------- muebles referenciales ----------
