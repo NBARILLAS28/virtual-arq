@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { makeCar } from './car.js';
 import { loadCar, CAR_MODELS } from './carmodel.js';
+import { makeTree, makeShrub } from './trees.js';
 
 const EPS = 0.001;
 
@@ -136,6 +137,26 @@ export function buildHouse(model, extras, M, quality = 'high') {
           const w = gb - ga;
           if (w < 0.45) return;
           let sill, head, glass = false;
+          // puertas exteriores confirmadas en los planos (extras.doors): puerta real, no ventana
+          const isDoor = ext && (extras.doors || []).some((d) => d.lvl === key && d.o === ln.o && Math.abs(d.c - ln.c) < 0.3 && ga - 0.15 <= d.a && d.b <= gb + 0.15);
+          if (isDoor) {
+            sill = 0; head = 2.1;
+            const y0d = ln.base, t = 0.06, f = M.frame, mid = (ga + gb) / 2;
+            const bx = (a, b, ya, yb, mt, tt = t) => ln.o === 'h'
+              ? box(cfg.group, a, b, y0d + ya, y0d + yb, ln.c - tt / 2, ln.c + tt / 2, mt, { solid: false })
+              : box(cfg.group, ln.c - tt / 2, ln.c + tt / 2, y0d + ya, y0d + yb, a, b, mt, { solid: false });
+            // marco, hoja de madera con vidrio superior y manija
+            bx(ga, ga + 0.06, 0, head, f, 0.14); bx(gb - 0.06, gb, 0, head, f, 0.14); bx(ga, gb, head - 0.06, head, f, 0.14);
+            bx(ga + 0.06, gb - 0.06, 0, head - 0.06, M.deck, 0.045);
+            const gl = ln.o === 'h'
+              ? box(cfg.group, ga + 0.2, gb - 0.2, y0d + 1.2, y0d + 1.95, ln.c - 0.03, ln.c + 0.03, M.glass, { cast: false, solid: false })
+              : box(cfg.group, ln.c - 0.03, ln.c + 0.03, y0d + 1.2, y0d + 1.95, ga + 0.2, gb - 0.2, M.glass, { cast: false, solid: false });
+            if (gl) gl.renderOrder = 2;
+            bx(gb - 0.2, gb - 0.12, 1.0, 1.04, M.metalDark, 0.12);
+            emit(ga, gb, y0d + head, ln.top, mat);
+            stats.doors++;
+          }
+          if (isDoor) return;
           if (ext) { glass = true; if (w >= 2.0) { sill = 0; head = 2.2; } else { sill = 1.0; head = 2.1; } }
           else { sill = 0; head = w > 1.3 ? 2.4 : 2.1; }
           const y0 = ln.base, y1 = ln.top;
@@ -250,8 +271,8 @@ export function buildHouse(model, extras, M, quality = 'high') {
   surfaces.push({ x0: st.landingX0, x1: st.x0, z0: st.northZ0, z1: st.southZ1, y: landY });
   // jardinera bajo el pozo de la escalera
   box(G.pb, st.x0, st.x1, L.pb, L.pb + 0.4, st.northZ1, st.southZ0, M.stoneRustic, { solid: true });
-  const shrub = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 10), M.leaf);
-  shrub.position.set((st.x0 + st.x1) / 2, L.pb + 0.7, (st.northZ1 + st.southZ0) / 2); shrub.scale.y = 0.7; shrub.castShadow = true; G.pb.add(shrub);
+  const shrub = makeShrub({ seed: 5, r: 0.55 });
+  shrub.position.set((st.x0 + st.x1) / 2, L.pb + 0.4, (st.northZ1 + st.southZ0) / 2); G.pb.add(shrub);
   // baranda del pozo en planta alta (lado este, tramo sur)
   box(G.pa, 2.78, 2.82, L.pa, L.pa + 0.9, st.southZ0, st.southZ1, M.wood, { solid: true });
   box(G.pa, 2.76, 2.84, L.pa + 0.88, L.pa + 0.94, st.southZ0, st.southZ1, M.wood, { solid: true });
@@ -313,12 +334,12 @@ export function buildHouse(model, extras, M, quality = 'high') {
   const triMesh = new THREE.Mesh(triGeo, M.plasterExt); triMesh.position.set(0, L.techo, -2.99); triMesh.castShadow = true; G.roof.add(triMesh);
 
   // ---------- vecinos (volumenes) y arboles ----------
-  const tree = (x, z, s = 1) => {
-    const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.1 * s, 0.16 * s, 2.6 * s, 8), M.trunk); tr.position.set(x, 1.3 * s, z); tr.castShadow = true;
-    const cr = new THREE.Mesh(new THREE.IcosahedronGeometry(1.5 * s, 1), M.leaf); cr.position.set(x, 3.4 * s, z); cr.scale.y = 0.85; cr.castShadow = true;
-    G.site.add(tr, cr);
+  const tree = (x, z, h, y = 0, seed = 1) => {
+    const t = makeTree({ seed, h });
+    t.position.set(x, y, z); t.rotation.y = seed * 1.7;
+    G.site.add(t);
   };
-  tree(-2.2, 2.4, 1.0); tree(11.0, 2.2, 1.15); tree(2.5, -18.0, 0.8); tree(6.2, -18.1, 0.7);
+  tree(-2.2, 2.4, 6.5, 0.02, 1); tree(11.0, 2.2, 7.5, 0.02, 2); tree(2.5, -18.0, 5.2, L.pb - 0.02, 3); tree(6.2, -18.1, 4.6, L.pb - 0.02, 4);
 
   // ---------- auto en el garage ----------
   // El auto apoya el eje trasero en el piso plano y el delantero sobre la rampa:
