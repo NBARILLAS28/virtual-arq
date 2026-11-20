@@ -2,6 +2,7 @@
 // archivo de extras (gradas, vacios, muebles). Unidades: metros.
 // Ejes: x a la derecha, y arriba, z hacia la calle. Origen: ejes A y 1.
 import * as THREE from 'three';
+import { makeCar } from './car.js';
 
 const EPS = 0.001;
 
@@ -319,17 +320,22 @@ export function buildHouse(model, extras, M, quality = 'high') {
   tree(-2.2, 2.4, 1.0); tree(11.0, 2.2, 1.15); tree(2.5, -18.0, 0.8); tree(6.2, -18.1, 0.7);
 
   // ---------- auto en el garage ----------
-  const car = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.62, 4.3), M.carPaint); body.position.y = 0.62;
-  const cab = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.55, 2.2), M.carPaint); cab.position.set(0, 1.18, 0.1);
-  const win = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.4, 2.0), M.glass); win.position.set(0, 1.2, 0.1);
-  car.add(body, cab, win);
-  [[-0.85, 1.35], [0.85, 1.35], [-0.85, -1.35], [0.85, -1.35]].forEach(([x, z]) => {
-    const w = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.22, 16), M.rubber); w.rotation.z = Math.PI / 2; w.position.set(x, 0.34, z); car.add(w);
-  });
-  car.traverse((o) => { if (o.isMesh) o.castShadow = true; });
-  car.position.set(6.7, L.garaje, -2.85); G.pb.add(car);
-  solids.push({ x0: 5.8, x1: 7.6, y0: L.garaje, y1: L.garaje + 1.5, z0: -5.0, z1: -0.7 });
+  // El auto apoya el eje trasero en el piso plano y el delantero sobre la rampa:
+  // se inclina segun la altura real del piso bajo cada eje.
+  {
+    const car = makeCar();
+    const AXLE = 1.35, carZ = -2.5;
+    const rampH = (z) => {
+      if (z <= gar.rampFrom) return L.garaje;
+      if (z >= gar.rampTo) return 0;
+      return L.garaje * (1 - (z - gar.rampFrom) / (gar.rampTo - gar.rampFrom));
+    };
+    const yRear = rampH(carZ - AXLE), yFront = rampH(carZ + AXLE);
+    car.rotation.x = Math.atan2(yRear - yFront, 2 * AXLE);   // nariz hacia abajo en la rampa
+    car.position.set((gar.x0 + gar.x1) / 2, (yRear + yFront) / 2, carZ);
+    G.pb.add(car);
+    solids.push({ x0: (gar.x0 + gar.x1) / 2 - 0.95, x1: (gar.x0 + gar.x1) / 2 + 0.95, y0: L.garaje, y1: L.garaje + 1.6, z0: carZ - 2.15, z1: carZ + 2.25 });
+  }
 
   // ---------- muebles referenciales ----------
   const furnMat = { bed: [M.bedding, 0.55], sofa: [M.fabric, 0.8], armchair: [M.fabric, 0.8], table: [M.wood, 0.75], coffee: [M.wood, 0.4], chair: [M.wood, 0.9], counter: [M.counter, 0.9], fridge: [M.white, 1.8], appliance: [M.white, 0.9], wardrobe: [M.wood, 2.0] };
