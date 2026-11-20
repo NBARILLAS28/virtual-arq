@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { makeCar } from './car.js';
 import { loadCar, CAR_MODELS } from './carmodel.js';
 import { makeTree, makeShrub } from './trees.js';
+import { placeFurniture, FURN } from './furniture.js';
 
 const EPS = 0.001;
 
@@ -373,9 +374,14 @@ export function buildHouse(model, extras, M, quality = 'high') {
     const [mat, h] = furnMat[f.t] || [M.wood, 0.8];
     const y0 = f.lvl === 'pb' ? L.pb : L.pa;
     const grp = f.lvl === 'pb' ? G.pb : G.pa;
-    box(grp, f.x0, f.x1, y0, y0 + h, f.z0, f.z1, mat, { solid: f.t !== 'chair' });
-    if (f.t === 'bed') box(grp, f.x0 + 0.1, f.x1 - 0.1, y0 + h, y0 + h + 0.12, f.z0 + 0.05, f.z0 + 0.45, M.white, { solid: false });
-    if (f.t === 'sofa' || f.t === 'armchair') box(grp, f.x0, f.x0 + 0.22, y0 + h, y0 + h + 0.3, f.z0, f.z1, M.fabric, { solid: false });
+    const parts = [box(grp, f.x0, f.x1, y0, y0 + h, f.z0, f.z1, mat, { solid: f.t !== 'chair' })];
+    // si hay modelo real para este tipo, se carga y reemplaza la caja (la caja sigue dando colision)
+    if (FURN[f.t] && !f.keepBox) {
+      placeFurniture(grp, f, y0).then((m) => { if (m) parts.forEach((p) => p && (p.visible = false)); })
+        .catch(() => { /* sin archivo: queda la caja */ });
+    }
+    if (f.t === 'bed') parts.push(box(grp, f.x0 + 0.1, f.x1 - 0.1, y0 + h, y0 + h + 0.12, f.z0 + 0.05, f.z0 + 0.45, M.white, { solid: false }));
+    if (f.t === 'sofa' || f.t === 'armchair') parts.push(box(grp, f.x0, f.x0 + 0.22, y0 + h, y0 + h + 0.3, f.z0, f.z1, M.fabric, { solid: false }));
   });
 
   // ---------- limites y punto de partida ----------
